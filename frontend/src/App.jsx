@@ -731,10 +731,43 @@ function App() {
 
 
         {/* ==================================================
-            SYSTEM STATUS
+            SYSTEM STATUS & LOGOUT
         ================================================== */}
 
-        <div className="sidebar-bottom">
+        <div className="sidebar-bottom" style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+
+          {/* LOGOUT */}
+
+          <button
+            type="button"
+            className="nav-item logout-btn"
+            style={{
+              width: "100%",
+              boxSizing: "border-box",
+              background: "rgba(10, 30, 20, 0.5)",
+              border: "1px solid rgba(0, 255, 127, 0.15)",
+              color: "rgba(220, 255, 240, 0.8)",
+              transition: "all 0.2s ease"
+            }}
+            onClick={() => {
+              console.log("Logout clicked");
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = "#00ff7f";
+              e.currentTarget.style.borderColor = "rgba(0, 255, 127, 0.4)";
+              e.currentTarget.style.boxShadow = "0 0 10px rgba(0, 255, 127, 0.1)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = "rgba(220, 255, 240, 0.8)";
+              e.currentTarget.style.borderColor = "rgba(0, 255, 127, 0.15)";
+              e.currentTarget.style.boxShadow = "none";
+            }}
+          >
+            <span>
+              ⎋
+            </span>
+            Logout
+          </button>
 
           <div className="system-status">
 
@@ -835,13 +868,38 @@ function App() {
 
         <div className="header-right">
 
-          <div className="connection">
+          
 
-            <span />
 
-            Backend Connected
-
-          </div>
+          <button
+            type="button"
+            className="signin-btn"
+            style={{
+              padding: "6px 14px",
+              borderRadius: "20px",
+              fontSize: "12px",
+              fontWeight: "600",
+              background: "rgba(0, 255, 127, 0.1)",
+              border: "1px solid rgba(0, 255, 127, 0.3)",
+              color: "#00ff7f",
+              cursor: "pointer",
+              transition: "all 0.2s ease",
+              boxShadow: "0 0 10px rgba(0, 255, 127, 0.05)",
+            }}
+            onClick={() => {
+              console.log("Sign In clicked");
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = "rgba(0, 255, 127, 0.2)";
+              e.currentTarget.style.boxShadow = "0 0 15px rgba(0, 255, 127, 0.2)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = "rgba(0, 255, 127, 0.1)";
+              e.currentTarget.style.boxShadow = "0 0 10px rgba(0, 255, 127, 0.05)";
+            }}
+          >
+            Sign In
+          </button>
 
 
           <div className="avatar">
@@ -1863,46 +1921,46 @@ function App() {
 
   }
 
-// ======================================================
-// MAIN RENDER
-// ======================================================
+  // ======================================================
+  // MAIN RENDER
+  // ======================================================
 
-return (
+  return (
 
-  <div className="app">
+    <div className="app">
 
-    {/* ==================================================
+      {/* ==================================================
         SIDEBAR
     ================================================== */}
 
-    {renderSidebar()}
+      {renderSidebar()}
 
 
-    {/* ==================================================
+      {/* ==================================================
         MAIN
     ================================================== */}
 
-    <main className="main">
+      <main className="main">
 
-      {currentPage === "cases" ? (
+        {currentPage === "cases" ? (
 
-        renderCasesPage()
+          renderCasesPage()
 
-      ) : currentPage === "case-details" ? (
+        ) : currentPage === "case-details" ? (
 
-        renderCaseDetailsPage()
+          renderCaseDetailsPage()
 
-      ) : (
+        ) : (
 
-        renderDashboardPage()
+          renderDashboardPage()
 
-      )}
+        )}
 
-    </main>
+      </main>
 
-  </div>
+    </div>
 
-);
+  );
 
 }
 
