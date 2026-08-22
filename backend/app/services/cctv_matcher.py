@@ -16,7 +16,7 @@ from app.services.reference_service import (
 # MATCHING CONFIGURATION
 # =========================================================
 
-MATCH_THRESHOLD = 0.70
+MATCH_THRESHOLD = 0.28
 
 MIN_CONFIRMATIONS = 3
 
