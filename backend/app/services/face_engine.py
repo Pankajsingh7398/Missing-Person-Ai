@@ -36,8 +36,8 @@ class FaceEngine:
             str(YUNET_MODEL),
             "",
             (320, 320),
-            0.75,
-            0.3,
+            0.6,
+            0.4,
             5000,
         )
 
@@ -48,7 +48,13 @@ class FaceEngine:
             )
         )
 
-    def detect_faces(self, image):
+        self.min_face_size = 45
+
+    def detect_faces(
+        self,
+        image,
+        filter_small=True,
+    ):
 
         if image is None:
             return []
@@ -65,6 +71,16 @@ class FaceEngine:
 
         if faces is None:
             return []
+
+        if filter_small:
+
+            faces = [
+                face for face in faces
+                if (
+                    face[2] >= self.min_face_size
+                    and face[3] >= self.min_face_size
+                )
+            ]
 
         return faces
 

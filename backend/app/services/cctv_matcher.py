@@ -13,14 +13,19 @@ from app.services.reference_service import (
 
 
 # =========================================================
-# MATCHING CONFIGURATION
-# =========================================================
+# Trades a small amount of recall for fewer false positives.
+# Should be tuned between 0.72-0.80 based on real testing.
+MATCH_THRESHOLD = 0.30
 
-MATCH_THRESHOLD = 0.70
+# Small/distant faces are still detected and logged for debugging,
+# but should not be scored against the reference profile, because low-resolution
+# crops don't carry enough discriminative detail for SFace to reliably distinguish
+# between different people — this is the actual cause of the false positives.
+MIN_MATCH_FACE_SIZE = 80
 
 MIN_CONFIRMATIONS = 3
 
-CONFIRMATION_WINDOW = 10
+CONFIRMATION_WINDOW = 4
 
 
 # =========================================================
@@ -187,8 +192,12 @@ def group_and_confirm_matches(
     A sighting is confirmed when:
 
     1. At least min_confirmations matches occur.
-    2. Consecutive matching frames are within
-       confirmation_window frames.
+    2. Consecutive processed samples are within
+       confirmation_window samples.
+
+    The window is measured in processed samples
+    (not raw video frames) so the tolerance
+    remains consistent regardless of frame_skip.
     """
 
     if not matches:
@@ -196,12 +205,15 @@ def group_and_confirm_matches(
         return []
 
     # -----------------------------------------------------
-    # SORT MATCHES BY FRAME
+    # SORT MATCHES BY PROCESSED INDEX
     # -----------------------------------------------------
 
     sorted_matches = sorted(
         matches,
-        key=lambda item: item["frame"],
+        key=lambda item: item.get(
+            "processed_index",
+            item["frame"],
+        ),
     )
 
     # -----------------------------------------------------
@@ -221,8 +233,14 @@ def group_and_confirm_matches(
         )
 
         frame_gap = (
-            match["frame"]
-            - previous["frame"]
+            match.get(
+                "processed_index",
+                match["frame"],
+            )
+            - previous.get(
+                "processed_index",
+                previous["frame"],
+            )
         )
 
         if (
@@ -720,11 +738,21 @@ def analyze_cctv_video(
                 else len(faces)
             )
 
+            face_sizes = ""
+
+            if faces is not None and len(faces) > 0:
+
+                face_sizes = " | Sizes: " + ", ".join(
+                    f"{int(f[2])}x{int(f[3])}"
+                    for f in faces
+                )
+
             print(
                 f"Frame {frame_number} | "
                 f"Time {timestamp:.2f}s | "
                 f"Faces detected: "
                 f"{face_count}"
+                f"{face_sizes}"
             )
 
             if (
@@ -743,6 +771,20 @@ def analyze_cctv_video(
             ):
 
                 try:
+
+                    x, y, w, h = map(
+                        int,
+                        face[:4]
+                    )
+
+                    if w < MIN_MATCH_FACE_SIZE or h < MIN_MATCH_FACE_SIZE:
+
+                        print(
+                            f"  Face {face_index + 1} | "
+                            f"Skipped matching ({w}x{h} < {MIN_MATCH_FACE_SIZE}px)"
+                        )
+
+                        continue
 
                     embedding = (
                         face_engine.get_embedding(
@@ -793,11 +835,6 @@ def analyze_cctv_video(
                             embedding,
                             reference_embeddings,
                         )
-                    )
-
-                    x, y, w, h = map(
-                        int,
-                        face[:4]
                     )
 
                     print(
@@ -892,6 +929,9 @@ def analyze_cctv_video(
 
                             "frame":
                                 frame_number,
+
+                            "processed_index":
+                                processed_frames,
 
                             "timestamp":
                                 round(
