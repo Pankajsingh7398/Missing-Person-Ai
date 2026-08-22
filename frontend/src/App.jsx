@@ -904,8 +904,6 @@ function App() {
 
             <span />
 
-            Backend Connected
-
           </div>
 
           {clerkUser ? (
