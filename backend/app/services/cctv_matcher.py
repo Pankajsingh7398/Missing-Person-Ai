@@ -15,7 +15,7 @@ from app.services.reference_service import (
 # =========================================================
 # Trades a small amount of recall for fewer false positives.
 # Should be tuned between 0.72-0.80 based on real testing.
-MATCH_THRESHOLD = 0.75
+MATCH_THRESHOLD = 0.30
 
 # Small/distant faces are still detected and logged for debugging,
 # but should not be scored against the reference profile, because low-resolution
