@@ -67,7 +67,8 @@ html {
 
 body {
   margin: 0;
-  min-width: 1000px;
+  width: 100%;
+  overflow-x: hidden;
   background: 
     radial-gradient(circle at 85% 0%, rgba(212, 247, 114, 0.08), transparent 45%),
     radial-gradient(circle at 10% 90%, rgba(23, 61, 42, 0.6), transparent 50%),
@@ -1929,4 +1930,177 @@ input:focus, select:focus, textarea:focus {
 .modal-btn-primary:hover {
   background: var(--accent-lime-hover);
   box-shadow: 0 4px 12px rgba(212, 247, 114, 0.2);
+}
+
+/* =========================================================
+   RESPONSIVE DESIGN SYSTEM (MOBILE, TABLET & DESKTOP overrides)
+   ========================================================= */
+
+.hamburger-btn {
+  display: none;
+  background: rgba(212, 247, 114, 0.1);
+  border: 1px solid rgba(212, 247, 114, 0.25);
+  color: var(--accent-lime);
+  font-size: 20px;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  line-height: 1;
+  transition: var(--transition);
+}
+
+.hamburger-btn:hover {
+  background: var(--accent-lime-soft);
+  border-color: var(--accent-lime);
+}
+
+@media (max-width: 1024px) {
+  .hamburger-btn {
+    display: block;
+  }
+
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: none;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: var(--shadow-lg), 0 0 40px rgba(0, 0, 0, 0.6);
+  }
+
+  .main {
+    margin-left: 0 !important;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .result-summary {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .person-profile-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .responsive-split-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .header {
+    height: 75px;
+    padding: 0 20px !important;
+  }
+
+  .header-title {
+    font-size: 18px !important;
+  }
+
+  .page-label {
+    font-size: 9px !important;
+  }
+
+  .connection {
+    display: none !important; /* Hide network status on tiny screens to save space */
+  }
+
+  .content {
+    padding: 20px 16px !important;
+    gap: 20px !important;
+  }
+
+  .control-card {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    padding: 20px !important;
+    gap: 16px;
+  }
+
+  .case-controls {
+    width: 100% !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px;
+  }
+
+  .case-controls input {
+    width: 100% !important;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .result-summary {
+    grid-template-columns: 1fr !important;
+  }
+
+  .person-profile-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .form-grid > * {
+    grid-column: span 1 !important;
+  }
+
+  .cases-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .upload-card {
+    padding: 20px !important;
+  }
+
+  .upload-header {
+    flex-direction: column !important;
+    gap: 12px;
+  }
+
+  .upload-symbol {
+    display: none;
+  }
+
+  .analysis-section {
+    padding: 20px !important;
+  }
+
+  .analysis-row {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px;
+    padding: 16px !important;
+  }
+
+  .analysis-metric {
+    width: 100%;
+    flex-direction: row !important;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-light);
+    padding-bottom: 4px;
+  }
+
+  .analysis-status-text {
+    align-self: flex-end;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }

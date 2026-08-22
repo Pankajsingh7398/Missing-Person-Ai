@@ -8,13 +8,10 @@ import SignUp from "./components/auth/SignUp.jsx";
 import ForgotPassword from "./components/auth/ForgotPassword.jsx";
 import LogoutModal from "./components/auth/LogoutModal.jsx";
 
-import {
-  getCaseAnalyses,
-  getAnalysis,
-  getSightings,
-  uploadCCTV,
-  getEvidenceImageUrl,
-} from "./api";
+import { getCaseAnalyses, getAnalysis, getSightings, uploadCCTV, getEvidenceImageUrl } from "./api";
+
+import AlertsPage from "./components/AlertsPage.jsx";
+import ReportsPage from "./components/ReportsPage.jsx";
 
 import "./index.css";
 
@@ -39,6 +36,9 @@ function App() {
 
   const [selectedCaseId, setSelectedCaseId] =
     useState(null);
+
+  const [mobileMenuOpen, setMobileMenuOpen] =
+    useState(false);
 
   // Sync routing state based on Clerk auth state
   useEffect(() => {
@@ -281,6 +281,8 @@ function App() {
       "case-details"
     );
 
+    setMobileMenuOpen(false);
+
   }
 
 
@@ -300,6 +302,8 @@ function App() {
 
     setError("");
 
+    setMobileMenuOpen(false);
+
   }
 
 
@@ -314,6 +318,8 @@ function App() {
     );
 
     setError("");
+
+    setMobileMenuOpen(false);
 
   }
 
@@ -365,6 +371,8 @@ function App() {
       "dashboard"
     );
 
+    setMobileMenuOpen(false);
+
   }
 
 
@@ -389,6 +397,8 @@ function App() {
     setCurrentPage(
       "case-details"
     );
+
+    setMobileMenuOpen(false);
 
   }
 
@@ -570,7 +580,7 @@ function App() {
 
     return (
 
-      <aside className="sidebar">
+      <aside className={"sidebar " + (mobileMenuOpen ? "open" : "")}>
 
         {/* ==================================================
             BRAND
@@ -694,13 +704,18 @@ function App() {
 
           <button
             type="button"
-            className="nav-item"
+            className={
+              "nav-item " +
+              (
+                currentPage === "alerts"
+                  ? "active"
+                  : ""
+              )
+            }
             onClick={() => {
-
-              setError(
-                "Alerts module is coming next."
-              );
-
+              setCurrentPage("alerts");
+              setError("");
+              setMobileMenuOpen(false);
             }}
           >
 
@@ -741,13 +756,18 @@ function App() {
 
           <button
             type="button"
-            className="nav-item"
+            className={
+              "nav-item " +
+              (
+                currentPage === "reports"
+                  ? "active"
+                  : ""
+              )
+            }
             onClick={() => {
-
-              setError(
-                "Reports module is coming next."
-              );
-
+              setCurrentPage("reports");
+              setError("");
+              setMobileMenuOpen(false);
             }}
           >
 
@@ -872,28 +892,73 @@ function App() {
     }
 
 
+    const isAlertsPage =
+      currentPage === "alerts";
+
+    const isReportsPage =
+      currentPage === "reports";
+
+
+    if (isAlertsPage) {
+
+      label =
+        "ALERT MONITORING";
+
+      title =
+        "System Alerts";
+
+    }
+
+
+    if (isReportsPage) {
+
+      label =
+        "ANALYTICS & DOSSIERS";
+
+      title =
+        "Platform Reports";
+
+    }
+
+
     return (
 
       <header className="header">
 
-        <div>
+        <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+          <button
+            type="button"
+            className="hamburger-btn"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label="Toggle Navigation Sidebar"
+          >
+            ☰
+          </button>
 
-          <div className="page-label">
+          <div>
 
-            {label}
+            <div className="page-label">
+
+              {label}
+
+            </div>
+
+
+            <h1 className="header-title">
+              {isCasesPage ? (
+                <>Missing Person <em>Cases</em></>
+              ) : isCaseDetailsPage ? (
+                <>Case <em>#{selectedCaseId || caseId}</em> Details</>
+              ) : isAlertsPage ? (
+                <>System <em>Intrusion & Matching</em> Alerts</>
+              ) : isReportsPage ? (
+                <>Platform <em>Intelligence</em> Reports</>
+              ) : (
+                <>CCTV <em>Intelligence</em> Dashboard</>
+              )}
+            </h1>
 
           </div>
-
-
-          <h1 className="header-title">
-            {isCasesPage ? (
-              <>Missing Person <em>Cases</em></>
-            ) : isCaseDetailsPage ? (
-              <>Case <em>#{selectedCaseId || caseId}</em> Details</>
-            ) : (
-              <>CCTV <em>Intelligence</em> Dashboard</>
-            )}
-          </h1>
 
         </div>
 
@@ -2082,6 +2147,20 @@ function App() {
           ) : currentPage === "case-details" ? (
 
             renderCaseDetailsPage()
+
+          ) : currentPage === "alerts" ? (
+
+            <>
+              {renderHeader()}
+              <AlertsPage />
+            </>
+
+          ) : currentPage === "reports" ? (
+
+            <>
+              {renderHeader()}
+              <ReportsPage />
+            </>
 
           ) : (
 
