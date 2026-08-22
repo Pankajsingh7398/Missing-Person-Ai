@@ -820,10 +820,14 @@ function App() {
           </div>
 
 
-          <h1>
-
-            {title}
-
+          <h1 className="header-title">
+            {isCasesPage ? (
+              <>Missing Person <em>Cases</em></>
+            ) : isCaseDetailsPage ? (
+              <>Case <em>#{selectedCaseId || caseId}</em> Details</>
+            ) : (
+              <>CCTV <em>Intelligence</em> Dashboard</>
+            )}
           </h1>
 
         </div>

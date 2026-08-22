@@ -624,7 +624,7 @@ function Cases({ onOpenCase }) {
                     </div>
 
                     <h1>
-                        Missing Person Cases
+                        Missing Person <em>Cases</em>
                     </h1>
 
                     <p>
