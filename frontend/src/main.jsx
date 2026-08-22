@@ -8,7 +8,7 @@ const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
-if (!PUBLISHABLE_KEY || PUBLISHABLE_KEY === "YOUR_CLERK_PUBLISHABLE_KEY" || PUBLISHABLE_KEY === "pk_test_placeholder") {
+if (!PUBLISHABLE_KEY || !PUBLISHABLE_KEY.startsWith("pk_")) {
   root.render(
     <React.StrictMode>
       <div style={{
