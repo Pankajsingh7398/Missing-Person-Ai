@@ -85,7 +85,7 @@ async def get_current_user(
     request_state = _clerk.authenticate_request(
         request_adapter,
         AuthenticateRequestOptions(
-            secret_key=os.environ.get("CLERK_SECRET_KEY", ""),
+            secret_key=os.environ.get("CLERK_SECRET_KEY", "pk_test_dXB3YXJkLWhhd2stOTc4OC5jbGVyay5hY2NvdW50cy5kZXYk"),
             authorized_parties=["http://localhost:5173", "http://localhost:5174"],
         ),
     )
