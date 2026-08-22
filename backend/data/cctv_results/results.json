@@ -1,0 +1,143 @@
+{
+  "success": true,
+  "analysis_id": "20260811_123026_958617",
+  "video": "data/missing_persons/2/videos/9abcd35d05dd465d92d56c9d62807619.mp4",
+  "video_name": "9abcd35d05dd465d92d56c9d62807619.mp4",
+  "fps": 29.59,
+  "total_frames": 237,
+  "processed_frames": 47,
+  "duration_seconds": 8.01,
+  "frame_skip": 5,
+  "reference_images": 5,
+  "match_threshold": 0.7,
+  "potential_matches": 9,
+  "matches": [
+    {
+      "frame": 10,
+      "timestamp": 0.34,
+      "face_index": 0,
+      "similarity": 0.7235,
+      "reference_index": 3,
+      "bounding_box": {
+        "x": 141,
+        "y": 35,
+        "width": 122,
+        "height": 163
+      },
+      "evidence_image": "match_0001.jpg"
+    },
+    {
+      "frame": 15,
+      "timestamp": 0.51,
+      "face_index": 0,
+      "similarity": 0.7412,
+      "reference_index": 3,
+      "bounding_box": {
+        "x": 134,
+        "y": 42,
+        "width": 123,
+        "height": 169
+      },
+      "evidence_image": "match_0002.jpg"
+    },
+    {
+      "frame": 20,
+      "timestamp": 0.68,
+      "face_index": 0,
+      "similarity": 0.7169,
+      "reference_index": 3,
+      "bounding_box": {
+        "x": 123,
+        "y": 69,
+        "width": 124,
+        "height": 160
+      },
+      "evidence_image": "match_0003.jpg"
+    },
+    {
+      "frame": 25,
+      "timestamp": 0.84,
+      "face_index": 0,
+      "similarity": 0.7221,
+      "reference_index": 3,
+      "bounding_box": {
+        "x": 116,
+        "y": 91,
+        "width": 123,
+        "height": 155
+      },
+      "evidence_image": "match_0004.jpg"
+    },
+    {
+      "frame": 30,
+      "timestamp": 1.01,
+      "face_index": 0,
+      "similarity": 0.748,
+      "reference_index": 3,
+      "bounding_box": {
+        "x": 110,
+        "y": 99,
+        "width": 122,
+        "height": 154
+      },
+      "evidence_image": "match_0005.jpg"
+    },
+    {
+      "frame": 140,
+      "timestamp": 4.73,
+      "face_index": 0,
+      "similarity": 0.715,
+      "reference_index": 3,
+      "bounding_box": {
+        "x": 133,
+        "y": 130,
+        "width": 133,
+        "height": 191
+      },
+      "evidence_image": "match_0006.jpg"
+    },
+    {
+      "frame": 145,
+      "timestamp": 4.9,
+      "face_index": 0,
+      "similarity": 0.711,
+      "reference_index": 3,
+      "bounding_box": {
+        "x": 116,
+        "y": 133,
+        "width": 133,
+        "height": 169
+      },
+      "evidence_image": "match_0007.jpg"
+    },
+    {
+      "frame": 185,
+      "timestamp": 6.25,
+      "face_index": 0,
+      "similarity": 0.7454,
+      "reference_index": 3,
+      "bounding_box": {
+        "x": 218,
+        "y": 23,
+        "width": 134,
+        "height": 180
+      },
+      "evidence_image": "match_0008.jpg"
+    },
+    {
+      "frame": 190,
+      "timestamp": 6.42,
+      "face_index": 0,
+      "similarity": 0.7049,
+      "reference_index": 3,
+      "bounding_box": {
+        "x": 189,
+        "y": 4,
+        "width": 139,
+        "height": 186
+      },
+      "evidence_image": "match_0009.jpg"
+    }
+  ],
+  "result_directory": "data/cctv_results/20260811_123026_958617"
+}
