@@ -22,7 +22,7 @@ from clerk_backend_api.security.types import AuthenticateRequestOptions
 # =========================================================
 
 _clerk = Clerk(
-    bearer_auth=os.environ.get("CLERK_SECRET_KEY", "pk_test_dXB3YXJkLWhhd2stOTc4OC5jbGVyay5hY2NvdW50cy5kZXYk")
+    bearer_auth=os.environ.get("CLERK_SECRET_KEY", "")
 )
 
 
