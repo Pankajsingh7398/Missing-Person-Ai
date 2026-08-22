@@ -13,10 +13,15 @@ from app.services.reference_service import (
 
 
 # =========================================================
-# MATCHING CONFIGURATION
-# =========================================================
+# Trades a small amount of recall for fewer false positives.
+# Should be tuned between 0.72-0.80 based on real testing.
+MATCH_THRESHOLD = 0.75
 
-MATCH_THRESHOLD = 0.28
+# Small/distant faces are still detected and logged for debugging,
+# but should not be scored against the reference profile, because low-resolution
+# crops don't carry enough discriminative detail for SFace to reliably distinguish
+# between different people — this is the actual cause of the false positives.
+MIN_MATCH_FACE_SIZE = 80
 
 MIN_CONFIRMATIONS = 3
 
@@ -767,6 +772,20 @@ def analyze_cctv_video(
 
                 try:
 
+                    x, y, w, h = map(
+                        int,
+                        face[:4]
+                    )
+
+                    if w < MIN_MATCH_FACE_SIZE or h < MIN_MATCH_FACE_SIZE:
+
+                        print(
+                            f"  Face {face_index + 1} | "
+                            f"Skipped matching ({w}x{h} < {MIN_MATCH_FACE_SIZE}px)"
+                        )
+
+                        continue
+
                     embedding = (
                         face_engine.get_embedding(
                             frame,
@@ -816,11 +835,6 @@ def analyze_cctv_video(
                             embedding,
                             reference_embeddings,
                         )
-                    )
-
-                    x, y, w, h = map(
-                        int,
-                        face[:4]
                     )
 
                     print(
