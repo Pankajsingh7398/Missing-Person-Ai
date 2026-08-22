@@ -1,4 +1,6 @@
 from pathlib import Path
+
+from app.services.auth import get_current_user
 from datetime import datetime
 from typing import Optional
 
@@ -65,6 +67,7 @@ class CaseCreate(BaseModel):
 def create_case(
     case: CaseCreate,
     db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
 ):
     """
     Create a missing-person case
@@ -143,6 +146,7 @@ def create_case(
 @router.get("")
 def get_cases(
     db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
 ):
     """
     Return all missing-person cases
@@ -256,6 +260,7 @@ def get_case(
     case_id: int,
 
     db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
 ):
     """
     Return one case from SQLite.
@@ -368,6 +373,7 @@ def get_reference_image(
     case_id: int,
     filename: str,
     db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
 ):
     """
     Return an actual reference image belonging
@@ -515,6 +521,7 @@ async def upload_reference_images(
     ),
 
     db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
 ):
     """
     Upload reference images for a

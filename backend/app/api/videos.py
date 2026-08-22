@@ -1,4 +1,6 @@
 from pathlib import Path
+
+from app.services.auth import get_current_user
 from datetime import datetime
 from uuid import uuid4
 import json
@@ -438,6 +440,7 @@ async def analyze_case_video(
         ),
     ),
     db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
 ):
     """
     Upload and analyze a CCTV video against
@@ -1061,6 +1064,7 @@ async def analyze_case_video(
 def get_case_analyses(
     case_id: int,
     db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
 ):
     """
     Return all CCTV analyses belonging
@@ -1163,6 +1167,7 @@ def get_case_analysis(
     case_id: int,
     analysis_id: str,
     db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
 ):
     """
     Return the complete stored result
@@ -1245,6 +1250,7 @@ def get_confirmed_sightings(
     case_id: int,
     analysis_id: str,
     db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
 ):
     """
     Return only confirmed CCTV sightings.
@@ -1297,6 +1303,7 @@ def get_potential_matches(
     case_id: int,
     analysis_id: str,
     db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
 ):
     """
     Return all raw potential face matches.
@@ -1350,6 +1357,7 @@ def get_evidence_image(
     analysis_id: str,
     filename: str,
     db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
 ):
     """
     Return one evidence image.
@@ -1479,6 +1487,7 @@ def get_evidence_gallery(
     case_id: int,
     analysis_id: str,
     db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
 ):
     """
     Return all evidence images belonging
@@ -1666,6 +1675,7 @@ def get_evidence_gallery(
 )
 async def analyze_uploaded_video(
     file: UploadFile = File(...),
+    current_user: dict = Depends(get_current_user),
 ):
     """
     Legacy CCTV analysis endpoint.

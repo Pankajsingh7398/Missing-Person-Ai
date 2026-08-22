@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
+import { useUser, useClerk, useAuth, AuthenticateWithRedirectCallback } from "@clerk/clerk-react";
 
 import Cases from "./cases.jsx";
 import CaseDetails from "./CaseDetails.jsx";
+import SignIn from "./components/auth/SignIn.jsx";
+import SignUp from "./components/auth/SignUp.jsx";
+import ForgotPassword from "./components/auth/ForgotPassword.jsx";
+import LogoutModal from "./components/auth/LogoutModal.jsx";
 
 import {
   getCaseAnalyses,
@@ -17,17 +22,44 @@ import "./index.css";
 function App() {
 
   // ======================================================
-  // APPLICATION NAVIGATION
+  // APPLICATION NAVIGATION & CLERK AUTH STATE
   // ======================================================
 
+  const { isLoaded, isSignedIn, user: clerkUser } = useUser();
+  const { signOut } = useClerk();
+
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [showProfileDropdown, setShowProfileDropdown] = useState(false);
+
   const [currentPage, setCurrentPage] =
-    useState("dashboard");
+    useState("signin");
 
   const [activeCaseId, setActiveCaseId] =
     useState(null);
 
   const [selectedCaseId, setSelectedCaseId] =
     useState(null);
+
+  // Sync routing state based on Clerk auth state
+  useEffect(() => {
+    // Handle SSO callback redirect from Google OAuth
+    if (window.location.pathname === "/sso-callback") {
+      setCurrentPage("sso-callback");
+      return;
+    }
+
+    if (!isLoaded) return;
+
+    if (isSignedIn) {
+      if (["signin", "signup", "forgot-password", "sso-callback"].includes(currentPage)) {
+        setCurrentPage("dashboard");
+      }
+    } else {
+      if (!["signin", "signup", "forgot-password", "sso-callback"].includes(currentPage)) {
+        setCurrentPage("signin");
+      }
+    }
+  }, [isLoaded, isSignedIn, currentPage]);
 
 
   // ======================================================
@@ -750,7 +782,7 @@ function App() {
               transition: "all 0.2s ease"
             }}
             onClick={() => {
-              console.log("Logout clicked");
+              setShowLogoutConfirm(true);
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.color = "#00ff7f";
@@ -868,39 +900,92 @@ function App() {
 
         <div className="header-right">
 
-          
+          <div className="connection">
 
+            <span />
 
-          <button
-            type="button"
-            className="signin-btn"
-            style={{
-              padding: "6px 14px",
-              borderRadius: "20px",
-              fontSize: "12px",
-              fontWeight: "600",
-              background: "rgba(0, 255, 127, 0.1)",
-              border: "1px solid rgba(0, 255, 127, 0.3)",
-              color: "#00ff7f",
-              cursor: "pointer",
-              transition: "all 0.2s ease",
-              boxShadow: "0 0 10px rgba(0, 255, 127, 0.05)",
-            }}
-            onClick={() => {
-              console.log("Sign In clicked");
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = "rgba(0, 255, 127, 0.2)";
-              e.currentTarget.style.boxShadow = "0 0 15px rgba(0, 255, 127, 0.2)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = "rgba(0, 255, 127, 0.1)";
-              e.currentTarget.style.boxShadow = "0 0 10px rgba(0, 255, 127, 0.05)";
-            }}
-          >
-            Sign In
-          </button>
+            Backend Connected
 
+          </div>
+
+          {clerkUser ? (
+            <div className="profile-menu-container">
+              <button
+                type="button"
+                className="profile-badge"
+                onClick={() => setShowProfileDropdown(!showProfileDropdown)}
+              >
+                👤 {clerkUser.fullName || clerkUser.primaryEmailAddress?.emailAddress || "Admin"}
+              </button>
+
+              {showProfileDropdown && (
+                <div className="profile-dropdown">
+                  <button
+                    type="button"
+                    className="profile-dropdown-item"
+                    onClick={() => {
+                      alert("Profile Settings");
+                      setShowProfileDropdown(false);
+                    }}
+                  >
+                    👤 Profile
+                  </button>
+                  <button
+                    type="button"
+                    className="profile-dropdown-item"
+                    onClick={() => {
+                      alert("System Settings");
+                      setShowProfileDropdown(false);
+                    }}
+                  >
+                    ⚙️ Settings
+                  </button>
+                  <div className="profile-dropdown-divider" />
+                  <button
+                    type="button"
+                    className="profile-dropdown-item"
+                    style={{ color: "var(--red)" }}
+                    onClick={() => {
+                      setShowProfileDropdown(false);
+                      setShowLogoutConfirm(true);
+                    }}
+                  >
+                    ⎋ Logout
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <button
+              type="button"
+              className="signin-btn"
+              style={{
+                padding: "6px 14px",
+                borderRadius: "20px",
+                fontSize: "12px",
+                fontWeight: "600",
+                background: "rgba(0, 255, 127, 0.1)",
+                border: "1px solid rgba(0, 255, 127, 0.3)",
+                color: "#00ff7f",
+                cursor: "pointer",
+                transition: "all 0.2s ease",
+                boxShadow: "0 0 10px rgba(0, 255, 127, 0.05)",
+              }}
+              onClick={() => {
+                setCurrentPage("signin");
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = "rgba(0, 255, 127, 0.2)";
+                e.currentTarget.style.boxShadow = "0 0 15px rgba(0, 255, 127, 0.2)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "rgba(0, 255, 127, 0.1)";
+                e.currentTarget.style.boxShadow = "0 0 10px rgba(0, 255, 127, 0.05)";
+              }}
+            >
+              Sign In
+            </button>
+          )}
 
           <div className="avatar">
             AI
@@ -1925,41 +2010,106 @@ function App() {
   // MAIN RENDER
   // ======================================================
 
+  // Handle SSO callback page (Google OAuth redirect)
+  if (currentPage === "sso-callback" || window.location.pathname === "/sso-callback") {
+    return (
+      <div style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        minHeight: "100vh",
+        background: "#0b1e14",
+        color: "#d4f772",
+        fontFamily: "Outfit, sans-serif",
+        flexDirection: "column",
+        gap: "16px"
+      }}>
+        <div style={{
+          width: "44px", height: "44px",
+          borderRadius: "8px",
+          background: "rgba(212,247,114,0.15)",
+          border: "1px solid rgba(212,247,114,0.45)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          fontSize: "18px", fontWeight: "800"
+        }}>AI</div>
+        <p style={{ color: "#a0b8a9", fontSize: "14px" }}>Completing Google sign-in...</p>
+        <AuthenticateWithRedirectCallback />
+      </div>
+    );
+  }
+
+  if (currentPage === "signin") {
+    return (
+      <SignIn
+        onNavigate={setCurrentPage}
+      />
+    );
+  }
+
+  if (currentPage === "signup") {
+    return (
+      <SignUp
+        onNavigate={setCurrentPage}
+      />
+    );
+  }
+
+  if (currentPage === "forgot-password") {
+    return (
+      <ForgotPassword onNavigate={setCurrentPage} />
+    );
+  }
+
   return (
+    <>
+      <div className="app">
 
-    <div className="app">
+        {/* ==================================================
+          SIDEBAR
+        ================================================== */}
 
-      {/* ==================================================
-        SIDEBAR
-    ================================================== */}
-
-      {renderSidebar()}
+        {renderSidebar()}
 
 
-      {/* ==================================================
-        MAIN
-    ================================================== */}
+        {/* ==================================================
+          MAIN
+        ================================================== */}
 
-      <main className="main">
+        <main className="main">
 
-        {currentPage === "cases" ? (
+          {currentPage === "cases" ? (
 
-          renderCasesPage()
+            renderCasesPage()
 
-        ) : currentPage === "case-details" ? (
+          ) : currentPage === "case-details" ? (
 
-          renderCaseDetailsPage()
+            renderCaseDetailsPage()
 
-        ) : (
+          ) : (
 
-          renderDashboardPage()
+            renderDashboardPage()
 
-        )}
+          )}
 
-      </main>
+        </main>
 
-    </div>
+      </div>
 
+      <LogoutModal
+        isOpen={showLogoutConfirm}
+        onCancel={() => setShowLogoutConfirm(false)}
+        onConfirm={async () => {
+          try {
+            await signOut();
+            setCurrentPage("signin");
+          } catch (err) {
+            console.error("Sign out failed:", err);
+          } finally {
+            setShowLogoutConfirm(false);
+          }
+        }}
+      />
+    </>
   );
 
 }
