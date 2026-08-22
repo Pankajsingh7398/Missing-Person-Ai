@@ -1,0 +1,37 @@
+# Dependencies
+node_modules/
+frontend/node_modules/
+
+# Python Virtual Environments
+.venv/
+backend/.venv/
+venv/
+env/
+
+# Python Cache & Bytecode
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# Databases
+*.db
+*.sqlite
+*.sqlite3
+backend/missing_person.db
+backend/data/missing_person.db
+
+# User Uploads and Processing Artifacts
+backend/data/cctv_videos/*
+backend/data/cctv_results/*
+backend/data/missing_persons/*
+!backend/data/cctv_videos/.gitkeep
+!backend/data/cctv_results/.gitkeep
+!backend/data/missing_persons/.gitkeep
+
+# Environment and Local Configurations
+.env
+.env.local
+.DS_Store
+*.log

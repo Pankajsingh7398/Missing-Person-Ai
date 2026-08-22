@@ -20,7 +20,7 @@ MATCH_THRESHOLD = 0.70
 
 MIN_CONFIRMATIONS = 3
 
-CONFIRMATION_WINDOW = 10
+CONFIRMATION_WINDOW = 4
 
 
 # =========================================================
@@ -187,8 +187,12 @@ def group_and_confirm_matches(
     A sighting is confirmed when:
 
     1. At least min_confirmations matches occur.
-    2. Consecutive matching frames are within
-       confirmation_window frames.
+    2. Consecutive processed samples are within
+       confirmation_window samples.
+
+    The window is measured in processed samples
+    (not raw video frames) so the tolerance
+    remains consistent regardless of frame_skip.
     """
 
     if not matches:
@@ -196,12 +200,15 @@ def group_and_confirm_matches(
         return []
 
     # -----------------------------------------------------
-    # SORT MATCHES BY FRAME
+    # SORT MATCHES BY PROCESSED INDEX
     # -----------------------------------------------------
 
     sorted_matches = sorted(
         matches,
-        key=lambda item: item["frame"],
+        key=lambda item: item.get(
+            "processed_index",
+            item["frame"],
+        ),
     )
 
     # -----------------------------------------------------
@@ -221,8 +228,14 @@ def group_and_confirm_matches(
         )
 
         frame_gap = (
-            match["frame"]
-            - previous["frame"]
+            match.get(
+                "processed_index",
+                match["frame"],
+            )
+            - previous.get(
+                "processed_index",
+                previous["frame"],
+            )
         )
 
         if (
@@ -720,11 +733,21 @@ def analyze_cctv_video(
                 else len(faces)
             )
 
+            face_sizes = ""
+
+            if faces is not None and len(faces) > 0:
+
+                face_sizes = " | Sizes: " + ", ".join(
+                    f"{int(f[2])}x{int(f[3])}"
+                    for f in faces
+                )
+
             print(
                 f"Frame {frame_number} | "
                 f"Time {timestamp:.2f}s | "
                 f"Faces detected: "
                 f"{face_count}"
+                f"{face_sizes}"
             )
 
             if (
@@ -892,6 +915,9 @@ def analyze_cctv_video(
 
                             "frame":
                                 frame_number,
+
+                            "processed_index":
+                                processed_frames,
 
                             "timestamp":
                                 round(
